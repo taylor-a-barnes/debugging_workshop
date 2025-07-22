@@ -10,20 +10,19 @@ add_executable(example src/main.cpp)
 # Specify the C++ standard
 target_compile_features(example PRIVATE cxx_std_11)
 
-if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+# Increase the warning level
+target_compile_options(example PRIVATE
+  $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU,Clang>>:-Wall;-Wextra;-Wpedantic>
+  $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:MSVC>>:/W4>
+)
 
-  # Unfortunately, increasing the warnings level in CMake requires compiler-specific flags
-  # Note: Before CMake 3.15, CMake applied the /W3 flag for MSVC automatically, so we would need to remove that
-  target_compile_options(example PRIVATE
-    $<$<CXX_COMPILER_ID:GNU,Clang>:-Wall -Wextra -Wpedantic>
-    $<$<CXX_COMPILER_ID:MSVC>:/W4>
-  )
-
-  message(STATUS "Sanitizers ENABLED")
-  set(SANITIZER_FLAGS "-fsanitize=address,leak,undefined -fno-omit-frame-pointer")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
-  set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} ${SANITIZER_FLAGS}")
-
-endif()
-
+# Enable santizers
+target_compile_options(example PRIVATE
+  $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU,Clang>>:-fsanitize=address,undefined;-fno-omit-frame-pointer>
+  $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:MSVC>>:/fsanitize=address;/Zi;/Od>
+)
+target_link_options(example PRIVATE
+  $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU,Clang>>:-fsanitize=address,undefined;-fno-omit-frame-pointer>
+  $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:MSVC>>:/INCREMENTAL:NO;/fsanitize=address>
+)
 

@@ -1,11 +1,10 @@
 #include <iostream>
-#include <vector>
 
 int main() {
 
   if ( false )
-    std::cout << "This doesn't print\n";
-    std::cout << "This prints\n";
+    std::cout << "First line\n";
+    std::cout << "Second line\n";
 
   return 0;
 }
