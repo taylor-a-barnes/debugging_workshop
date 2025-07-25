@@ -15,14 +15,3 @@ target_compile_options(example PRIVATE
   $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU,Clang>>:-Wall;-Wextra;-Wpedantic>
   $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:MSVC>>:/W4>
 )
-
-# Enable santizers
-target_compile_options(example PRIVATE
-  $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU,Clang>>:-fsanitize=address,undefined;-fno-omit-frame-pointer>
-  $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:MSVC>>:/fsanitize=address;/Zi;/Od>
-)
-target_link_options(example PRIVATE
-  $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU,Clang>>:-fsanitize=address,undefined;-fno-omit-frame-pointer>
-  $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:MSVC>>:/INCREMENTAL:NO;/fsanitize=address>
-)
-
